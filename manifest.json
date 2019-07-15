@@ -1,0 +1,12 @@
+{
+  "runtime":{
+    "majorVersion": "2"
+  },
+  "command": "java -jar boot-poc-crud-1.0-SNAPSHOT.jar",
+  "release": {
+    "build": "2019",
+    "commit": "boot poc crud",
+    "version": "1.0-SNAPSHOT"
+  },
+  "notes": "REST Spring Boot 2 app Oracle Cloud"
+}

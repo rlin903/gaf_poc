@@ -1,0 +1,51 @@
+package com.gaf.integration.controller;
+
+import com.gaf.integration.exception.ResourceNotFoundException;
+import com.gaf.integration.model.Contact;
+import com.gaf.integration.service.CRUDService;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping({"/contacts"})
+@Api(value="Contact Management System",
+        description="Operations pertaining to contact in ERP System")
+public class ContactController {
+
+    @Autowired
+    CRUDService dataService;
+
+    @GetMapping
+    public List<Contact> findAll(){
+        return dataService.findAllContact();
+    }
+
+    @GetMapping(path = {"/{id}"})
+    public ResponseEntity<Contact> findById(@PathVariable long id) throws ResourceNotFoundException {
+        return dataService.findContactById(id)
+                .map(record -> ResponseEntity.ok().body(record))
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found for this id :: " + id));
+    }
+
+    @PostMapping
+    public Contact create(@RequestBody Contact contact){
+        return dataService.createContact(contact);
+    }
+
+    @PutMapping(value="/{id}")
+    public ResponseEntity<Contact> update(@PathVariable("id") long id,
+                                          @RequestBody Contact contact)  throws ResourceNotFoundException {
+        return dataService.findContactById(id)
+                .map(record -> {
+                    record.setName(contact.getName());
+                    record.setEmail(contact.getEmail());
+                    record.setPhone(contact.getPhone());
+                    Contact updated = dataService.updateContact(record);
+                    return ResponseEntity.ok().body(updated);
+                }).orElse(ResponseEntity.notFound().build());
+    }
+}
